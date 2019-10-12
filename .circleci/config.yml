@@ -9,14 +9,14 @@ jobs:
           path: ~/repo
       - restore_cache: # Restore modules from previous builds.
           keys:
-            - python-venvs-{{ checksum "printer-service/requirements.txt" }}-{{ checksum "pi-host-service/requirements.txt" }}
+            - node-modules-{{ checksum "package.json" }}
       - run:
           name: Install dependencies
           command: npm install
       - save_cache: # Cache modules between builds.
           paths:
             - ./node_modules
-          key: python-venvs-{{ checksum "printer-service/requirements.txt" }}-{{ checksum "pi-host-service/requirements.txt" }}
+          key: node-modules-{{ checksum "package.json" }}
       - persist_to_workspace:
           root: ~/repo
           paths:
