@@ -35,6 +35,20 @@ jobs:
       - deploy:
           name: Start << parameters.stage >> deployment
           command: make deploy-<< parameters.stage >>
+  deploy-group:
+    docker:
+      - image: amaysim/serverless:1.53.0
+    working_directory: ~/repo/
+    parameters:
+      stage:
+        type: string
+        default: dev
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - deploy:
+          name: Start << parameters.stage >> deployment
+          command: node deploy-group.js
 
 workflows:
   version: 2.1
@@ -49,3 +63,13 @@ workflows:
             branches:
               only:
                 - master
+      - deploy-group:
+          stage: dev
+          requires:
+            - deploy-serverless
+          filters:
+            branches:
+              only:
+                - master
+      # get latest group version using group name
+      # deploy version - aws cli
