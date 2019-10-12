@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   get:
     docker:
-      - image: circleci/node-stretch
+      - image: circleci/node:8.10
     working_directory: ~/repo/
     steps:
       - checkout:
