@@ -1,6 +1,6 @@
 aws = require("aws-sdk");
 
-let groupId;
+let groupId, versionId;
 // const credentials = new aws.SharedIniFileCredentials({
 //   profile: "personal"
 // });
@@ -8,17 +8,16 @@ let groupId;
 ggClient = new aws.Greengrass({ region: "eu-west-2" });
 
 const getVersions = (err, data) => {
-  console.log(
-    err,
-    data.Groups.filter(group => group.Name == "DemoTestGroupNewName")[0].Id
-  );
+  if (err) {
+    throw err;
+  }
+
   groupId = data.Groups.filter(group => group.Name == "DemoTestGroupNewName")[0]
     .Id;
+
   ggClient.listGroupVersions(
     {
-      GroupId: data.Groups.filter(
-        group => group.Name == "DemoTestGroupNewName"
-      )[0].Id
+      GroupId: groupId
     },
     (err, data) => {
       deployLatest(err, data);
@@ -27,15 +26,24 @@ const getVersions = (err, data) => {
 };
 
 const deployLatest = (err, data) => {
-  console.log(err, data.Versions.sort(compare));
+  if (err) {
+    throw err;
+  }
+
+  versionId = data.Versions.sort(compare)[0].Version;
+
   ggClient.createDeployment(
     {
       DeploymentType: "NewDeployment",
       GroupId: groupId,
-      GroupVersionId: data.Versions.sort(compare)[0].Version /* required */
+      GroupVersionId: versionId
     },
     (err, data) => {
-      console.log(err, data);
+      if (err) {
+        throw err;
+      }
+
+      console.log(`successfully deployed with deploymentId: ${data}`);
     }
   );
 };
@@ -53,8 +61,10 @@ const compare = (a, b) => {
   return 0;
 };
 
-console.log("starting");
 ggClient.listGroups({}, (err, data) => {
+  if (err) {
+    throw err;
+  }
+
   getVersions(err, data);
 });
-console.log("deployed");
