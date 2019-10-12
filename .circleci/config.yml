@@ -23,7 +23,7 @@ jobs:
             - "*"
   deploy-serverless:
     docker:
-      - image: circleci/node-stretch
+      - image: circleci/node:8.10
     parameters:
       stage:
         type: string
