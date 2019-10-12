@@ -1,0 +1,207 @@
+service: greengrasserverless
+plugins:
+  - serverless-pseudo-parameters
+  - serverless-aws-alias
+
+custom:
+  # COGNITO_USER_POOL_ARN: ${file(./serverless.env.yml):${opt:stage, self:provider.stage}.COGNITO_USER_POOL_ARN}
+  dev:
+    DEEP_LINK_SCHEME: "well-pharmacy-dev"
+  uat:
+    DEEP_LINK_SCHEME: "well-pharmacy-uat"
+  prod:
+    DEEP_LINK_SCHEME: "well-pharmacy"
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: eu-west-2
+  variableSyntax: "\\${((?!iot)[ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)]+?)}" # Serverless will only match on vars not prefixed with iot
+  # environment:
+    # PHARMACY_CONNECTION_STRING: ${file(./serverless.env.yml):${opt:stage, self:provider.stage}.PHARMACY_CONNECTION_STRING}
+
+functions:
+  testGreengrassFunc:
+    handler: handler.testGreengrassFunctionOne # required, handler set in AWS Lambda
+
+resources:
+  Resources:
+    # LambdaVersion: 
+    #   Type: AWS::Lambda::Version
+    #   Properties: 
+    #     FunctionName: 
+    GreengrasscoreDevice:
+      Type: 'AWS::IoT::Thing'
+      Properties:
+        ThingName: GreengrasscoreDevice
+    TestCoreDefinition:
+      Type: 'AWS::Greengrass::CoreDefinition'
+      Properties:
+        Name: DemoTestCoreDefinition
+    TestCoreDefinitionVersion:
+      Type: 'AWS::Greengrass::CoreDefinitionVersion'
+      Properties:
+        CoreDefinitionId: !Ref TestCoreDefinition
+        Cores:
+          - Id: GreengrasscoreDevice
+            CertificateArn: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:cert/5d58515adfa886224536a5505a21b82a8f4a9c3063dffa1c22f15ce0032b2039
+            SyncShadow: 'false'
+            ThingArn: 
+              Fn::Sub: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:thing/GreengrasscoreDevice
+    DeviceInGreengrassGroup1:
+      Type: 'AWS::IoT::Thing'
+      Properties:
+        ThingName: DeviceInGreengrassGroup1
+    TestDeviceDefinition:
+      Type: 'AWS::Greengrass::DeviceDefinition'
+      Properties:
+        Name: DemoTestDeviceDefinition
+    TestDeviceDefinitionVersion:
+      Type: 'AWS::Greengrass::DeviceDefinitionVersion'
+      Properties:
+        DeviceDefinitionId: '#{TestDeviceDefinition.Id}'
+        Devices:
+          - Id: DeviceInGreengrassGroup1
+            CertificateArn: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:cert/74fc45aad75f77f7a9e21a707d2618be06de38a7d212ce43ff76d88e8c833ff1
+            SyncShadow: 'true'
+            ThingArn: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:thing/DeviceInGreengrassGroup1
+    GodPolicy:
+      Type: AWS::IoT::Policy
+      Properties: 
+        PolicyDocument: 
+          Version: "2012-10-17"
+          Statement:
+            - 
+              Effect: Allow
+              Action:
+                - iot:*
+                - greengrass:*
+              Resource: '*'
+        PolicyName: GodPolicy
+    GodPolicyDeviceCertAttach:
+      Type: AWS::IoT::PolicyPrincipalAttachment
+      Properties: 
+        PolicyName:
+          !Ref GodPolicy
+        Principal: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:cert/74fc45aad75f77f7a9e21a707d2618be06de38a7d212ce43ff76d88e8c833ff1
+    GodPolicyCoreCertAttach:
+      Type: AWS::IoT::PolicyPrincipalAttachment
+      Properties: 
+        PolicyName: 
+          !Ref GodPolicy
+        Principal: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:cert/5d58515adfa886224536a5505a21b82a8f4a9c3063dffa1c22f15ce0032b2039
+    DeviceInGreengrassGroup1Attach:
+      Type: AWS::IoT::ThingPrincipalAttachment
+      Properties: 
+        Principal: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:cert/74fc45aad75f77f7a9e21a707d2618be06de38a7d212ce43ff76d88e8c833ff1
+        ThingName: 
+          !Ref DeviceInGreengrassGroup1
+    GreengrasscoreDeviceAttach:
+      Type: AWS::IoT::ThingPrincipalAttachment
+      Properties: 
+        Principal: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:cert/5d58515adfa886224536a5505a21b82a8f4a9c3063dffa1c22f15ce0032b2039
+        ThingName: 
+          !Ref GreengrasscoreDevice
+    TestFunctionDefinition:
+      Type: 'AWS::Greengrass::FunctionDefinition'
+      Properties:
+        Name: DemoTestFunctionDefinition
+    TestFunctionDefinitionVersion:
+      Type: 'AWS::Greengrass::FunctionDefinitionVersion'
+      Properties:
+        FunctionDefinitionId:
+          !Ref TestFunctionDefinition
+        DefaultConfig:
+          Execution:
+            IsolationMode: GreengrassContainer
+        Functions:
+          - Id: TestLambda1
+            # Target requires version, not just arn
+            FunctionArn: '#{TestGreengrassFuncLambdaFunction.Arn}:${self:provider.stage}'
+            FunctionConfiguration:
+              Timeout: 30
+              MemorySize: 256000
+              EncodingType: json
+              Environment:
+                Execution:
+                  IsolationMode: GreengrassContainer
+    TestLoggerDefinition:
+      Type: 'AWS::Greengrass::LoggerDefinition'
+      Properties:
+        Name: DemoTestLoggerDefinition
+    TestLoggerDefinitionVersion:
+      Type: 'AWS::Greengrass::LoggerDefinitionVersion'
+      Properties:
+        LoggerDefinitionId: !Ref TestLoggerDefinition
+        Loggers:
+          - Id: GGSystemLogger
+            Type: AWSCloudWatch
+            Component: GreengrassSystem
+            Level: INFO
+          - Id: GGLambdaLogger
+            Type: AWSCloudWatch
+            Component: Lambda
+            Level: INFO
+    TestResourceDefinition:
+      Type: 'AWS::Greengrass::ResourceDefinition'
+      Properties:
+        Name: DemoTestResourceDefinition
+    TestResourceDefinitionVersion:
+      Type: 'AWS::Greengrass::ResourceDefinitionVersion'
+      Properties:
+        ResourceDefinitionId: !Ref TestResourceDefinition
+        Resources:
+          - Id: ResourceId1
+            Name: LocalDeviceResource
+            ResourceDataContainer:
+              LocalDeviceResourceData:
+                SourcePath: /dev/TestSourcePath1
+                GroupOwnerSetting:
+                  AutoAddGroupOwner: 'false'
+                  GroupOwner: TestOwner
+          - Id: ResourceId2
+            Name: LocalVolumeResourceData
+            ResourceDataContainer:
+              LocalVolumeResourceData:
+                SourcePath: /dev/TestSourcePath2
+                DestinationPath: /volumes/TestDestinationPath2
+                GroupOwnerSetting:
+                  AutoAddGroupOwner: 'false'
+                  GroupOwner: TestOwner
+    TestSubscriptionDefinition:
+      Type: 'AWS::Greengrass::SubscriptionDefinition'
+      Properties:
+        Name: DemoTestSubscriptionDefinition
+    TestSubscriptionDefinitionVersion:
+      Type: 'AWS::Greengrass::SubscriptionDefinitionVersion'
+      Properties:
+        SubscriptionDefinitionId: !Ref TestSubscriptionDefinition
+        Subscriptions:
+          - Id: TestSubscription1
+            # Source: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:thing/DeviceInGreengrassGroup1
+            Source: cloud
+            Subject: world/hellofive
+            # Target requires version, not just arn
+            Target: '#{TestGreengrassFuncLambdaFunction.Arn}:${self:provider.stage}'
+          - Id: TestSubscription2
+            # Source: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:thing/DeviceInGreengrassGroup1
+            Source: '#{TestGreengrassFuncLambdaFunction.Arn}:${self:provider.stage}'
+            Subject: hello/world
+            # Target requires version, not just arn
+            Target: cloud             
+    TestGroup:
+      Type: 'AWS::Greengrass::Group'
+      Properties:
+        Name: DemoTestGroupNewName
+        RoleArn: arn:aws:iam::#{AWS::AccountId}:role/TestUser
+    TestGroupVersion:
+      Type: 'AWS::Greengrass::GroupVersion'
+      Properties: 
+        CoreDefinitionVersionArn: !Ref TestCoreDefinitionVersion
+        DeviceDefinitionVersionArn: !Ref TestDeviceDefinitionVersion
+        FunctionDefinitionVersionArn: !Ref TestFunctionDefinitionVersion
+        SubscriptionDefinitionVersionArn: !Ref TestSubscriptionDefinitionVersion
+        LoggerDefinitionVersionArn: !Ref TestLoggerDefinitionVersion
+        ResourceDefinitionVersionArn: !Ref TestResourceDefinitionVersion
+        GroupId: '#{TestGroup.Id}'

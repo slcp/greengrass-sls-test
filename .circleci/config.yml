@@ -1,0 +1,50 @@
+version: 2.1
+jobs:
+  get:
+    docker:
+      - image: circleci/node-stretch
+    working_directory: ~/repo/
+    steps:
+      - checkout:
+          path: ~/repo
+      - restore_cache: # Restore modules from previous builds.
+          keys:
+            - python-venvs-{{ checksum "printer-service/requirements.txt" }}-{{ checksum "pi-host-service/requirements.txt" }}
+      - run:
+          name: Install dependencies
+          command: npm install
+      - save_cache: # Cache modules between builds.
+          paths:
+            - ./node_modules
+          key: python-venvs-{{ checksum "printer-service/requirements.txt" }}-{{ checksum "pi-host-service/requirements.txt" }}
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - "*"
+  deploy-serverless:
+    docker:
+      - image: circleci/node-stretch
+    parameters:
+      stage:
+        type: string
+        default: dev
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - deploy:
+          name: Start << parameters.stage >> deployment
+          command: make deploy-<< parameters.stage >>
+
+workflows:
+  version: 2.1
+  build:
+    jobs:
+      - get
+      - deploy-serverless:
+          stage: dev
+          requires:
+            - get
+          filters:
+            branches:
+              only:
+                - master

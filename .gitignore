@@ -1,0 +1,5 @@
+.serverless/*
+wpa_supplicant.conf
+ssh
+node_modules/*
+package-lock.json
