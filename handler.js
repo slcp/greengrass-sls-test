@@ -16,7 +16,7 @@ const pubOpt = {
   topic: "hello/world",
   payload: JSON.stringify({
     message: util.format(
-      "Redeploy quickly with new message deploying same version",
+      "Change lambda contents and let CircleCI take care of the rest",
       myPlatform
     )
   })
