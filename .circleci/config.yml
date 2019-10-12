@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   get:
     docker:
-      - image: circleci/node:8.10
+      - image: amaysim/serverless:1.53.0
     working_directory: ~/repo/
     steps:
       - checkout:
@@ -23,7 +23,7 @@ jobs:
             - "*"
   deploy-serverless:
     docker:
-      - image: circleci/node:8.10
+      - image: amaysim/serverless:1.53.0
     working_directory: ~/repo/
     parameters:
       stage:
