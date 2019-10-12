@@ -24,6 +24,7 @@ jobs:
   deploy-serverless:
     docker:
       - image: circleci/node:8.10
+    working_directory: ~/repo/
     parameters:
       stage:
         type: string
