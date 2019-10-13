@@ -139,6 +139,11 @@ resources:
             Type: AWSCloudWatch
             Component: GreengrassSystem
             Level: INFO
+          - Id: GGSystemLoggerFile
+            Type: AWSCloudWatch
+            Space: 50000
+            Component: GreengrassSystem
+            Level: INFO
           - Id: GGLambdaLogger
             Type: AWSCloudWatch
             Component: Lambda
