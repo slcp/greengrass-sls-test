@@ -170,14 +170,14 @@ resources:
                 GroupOwnerSetting:
                   AutoAddGroupOwner: 'false'
                   GroupOwner: TestOwner
-          - Id: ResourceId2
-            Name: LocalVolumeResourceData
-            ResourceDataContainer:
-              LocalVolumeResourceData:
-                SourcePath: /home/pi/testdata
-                DestinationPath: /home/test
-                GroupOwnerSetting:
-                  AutoAddGroupOwner: true
+          # - Id: ResourceId2
+          #   Name: LocalVolumeResourceData
+          #   ResourceDataContainer:
+          #     LocalVolumeResourceData:
+          #       SourcePath: /home/pi/testdata
+          #       DestinationPath: /home/test
+          #       GroupOwnerSetting:
+          #         AutoAddGroupOwner: true
     TestSubscriptionDefinition:
       Type: 'AWS::Greengrass::SubscriptionDefinition'
       Properties:
