@@ -140,7 +140,7 @@ resources:
             Component: GreengrassSystem
             Level: INFO
           - Id: GGSystemLoggerFile
-            Type: AWSCloudWatch
+            Type: FileSystem
             Space: 50000
             Component: GreengrassSystem
             Level: INFO
