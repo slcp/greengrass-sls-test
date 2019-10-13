@@ -3,6 +3,7 @@ const ggSdk = require("aws-greengrass-core-sdk");
 
 const iotClient = new ggSdk.IotData();
 const os = require("os");
+const fs = require("fs");
 const util = require("util");
 
 function publishCallback(err, data) {
@@ -10,7 +11,7 @@ function publishCallback(err, data) {
   console.log(data);
 }
 
-let raw = os.readFileSync("/volumes/TestData/test.json");
+let raw = fs.readFileSync("/volumes/TestData/test.json");
 let parsed = JSON.parse(raw);
 
 const myPlatform = util.format("%s-%s", os.platform(), os.release());
