@@ -164,11 +164,11 @@ resources:
             Name: LocalVolumeResourceData
             ResourceDataContainer:
               LocalVolumeResourceData:
-                SourcePath: /dev/TestSourcePath2
-                DestinationPath: /volumes/TestDestinationPath2
+                SourcePath: /home/pi/testdata
+                DestinationPath: /volumes/TestData
                 GroupOwnerSetting:
-                  AutoAddGroupOwner: 'false'
-                  GroupOwner: TestOwner
+                  AutoAddGroupOwner: true
+                  GroupOwner: pi
     TestSubscriptionDefinition:
       Type: 'AWS::Greengrass::SubscriptionDefinition'
       Properties:

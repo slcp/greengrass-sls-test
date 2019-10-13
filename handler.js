@@ -1,5 +1,6 @@
 "use strict";
 
+const fs = require("os")
 const ggSdk = require("aws-greengrass-core-sdk");
 
 const iotClient = new ggSdk.IotData();
@@ -11,14 +12,14 @@ function publishCallback(err, data) {
   console.log(data);
 }
 
+let raw = fs.readFileSync("/volumes/TestData/test.json");
+let parsed = JSON.parse(raw);
+
 const myPlatform = util.format("%s-%s", os.platform(), os.release());
 const pubOpt = {
   topic: "hello/world",
   payload: JSON.stringify({
-    message: util.format(
-      "Change lambda contents and let CircleCI take care of the rest",
-      myPlatform
-    )
+    message: parsed
   })
 };
 
