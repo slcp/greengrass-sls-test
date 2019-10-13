@@ -168,7 +168,6 @@ resources:
                 DestinationPath: /volumes/TestData
                 GroupOwnerSetting:
                   AutoAddGroupOwner: true
-                  GroupOwner: pi
     TestSubscriptionDefinition:
       Type: 'AWS::Greengrass::SubscriptionDefinition'
       Properties:
