@@ -12,14 +12,16 @@ function publishCallback(err, data) {
 }
 
 console.log(fs.readdirSync("/"))
-let raw = fs.readdirSync("/");
-let parsed = JSON.parse(raw);
+// let raw = fs.readdirSync("/");
+// let parsed = JSON.parse(raw);
 
 const myPlatform = util.format("%s-%s", os.platform(), os.release());
 const pubOpt = {
   topic: "hello/world",
   payload: JSON.stringify({
-    message: parsed
+    message: {
+      "hello": 'HELLO'
+    }
   })
 };
 
