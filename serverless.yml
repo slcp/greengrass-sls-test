@@ -143,6 +143,10 @@ resources:
             Type: AWSCloudWatch
             Component: Lambda
             Level: INFO
+          - Id: GGLambdaLoggerFile
+            Type: FileSystem
+            Component: Lambda
+            Level: INFO
     TestResourceDefinition:
       Type: 'AWS::Greengrass::ResourceDefinition'
       Properties:
