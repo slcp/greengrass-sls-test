@@ -23,7 +23,11 @@ provider:
 
 functions:
   testGreengrassFunc:
+    runtime: nodejs8.10
     handler: handler.testGreengrassFunctionOne # required, handler set in AWS Lambda
+  testPythonFunc:
+    runtime: python2.7
+    handler: scanner_reader/handler.hello
 
 resources:
   Resources:
@@ -126,6 +130,16 @@ resources:
               Environment:
                 Execution:
                   IsolationMode: GreengrassContainer
+          - Id: TestLambda2
+            # Target requires version, not just arn
+            FunctionArn: '#{TestPythonFuncLambdaFunction.Arn}:${self:provider.stage}'
+            FunctionConfiguration:
+              Timeout: 30
+              MemorySize: 256000
+              EncodingType: json
+              Environment:
+                Execution:
+                  IsolationMode: GreengrassContainer
     TestLoggerDefinition:
       Type: 'AWS::Greengrass::LoggerDefinition'
       Properties:
@@ -170,14 +184,6 @@ resources:
                 GroupOwnerSetting:
                   AutoAddGroupOwner: 'false'
                   GroupOwner: TestOwner
-          # - Id: ResourceId2
-          #   Name: LocalVolumeResourceData
-          #   ResourceDataContainer:
-          #     LocalVolumeResourceData:
-          #       SourcePath: /home/pi/testdata
-          #       DestinationPath: /home/test
-          #       GroupOwnerSetting:
-          #         AutoAddGroupOwner: true
     TestSubscriptionDefinition:
       Type: 'AWS::Greengrass::SubscriptionDefinition'
       Properties:
@@ -193,9 +199,21 @@ resources:
             Subject: world/hellofive
             # Target requires version, not just arn
             Target: '#{TestGreengrassFuncLambdaFunction.Arn}:${self:provider.stage}'
+          - Id: TestSubscription3
+            # Source: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:thing/DeviceInGreengrassGroup1
+            Source: cloud
+            Subject: world/hellopython
+            # Target requires version, not just arn
+            Target: '#{TestPythonFuncLambdaFunction.Arn}:${self:provider.stage}'
           - Id: TestSubscription2
             # Source: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:thing/DeviceInGreengrassGroup1
             Source: '#{TestGreengrassFuncLambdaFunction.Arn}:${self:provider.stage}'
+            Subject: hello/world
+            # Target requires version, not just arn
+            Target: cloud 
+          - Id: TestSubscription4
+            # Source: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:thing/DeviceInGreengrassGroup1
+            Source: '#{TestPythonFuncLambdaFunction.Arn}:${self:provider.stage}'
             Subject: hello/world
             # Target requires version, not just arn
             Target: cloud             
