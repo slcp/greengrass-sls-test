@@ -11,20 +11,15 @@ function publishCallback(err, data) {
   console.log(data);
 }
 
-console.log(fs.readdirSync("/home/pi"))
-let raw = fs.readFileSync("/home/pi/testdata/test.json");
-let parsed = JSON.parse(raw);
-
 const myPlatform = util.format("%s-%s", os.platform(), os.release());
-const pubOpt = {
+
+function greengrassHelloWorldRun(messge) {
+  iotClient.publish({
   topic: "hello/world",
   payload: JSON.stringify({
-    message: parsed
+    message: message
   })
-};
-
-function greengrassHelloWorldRun() {
-  iotClient.publish(pubOpt, publishCallback);
+}, publishCallback);
 }
 
 module.exports.testGreengrassFunctionOne = (event, context, callback) => {
@@ -35,8 +30,11 @@ module.exports.testGreengrassFunctionOne = (event, context, callback) => {
       message: "invoked"
     })
   };
+  console.log(fs.readdirSync("/home/pi"));
+  let raw = fs.readFileSync("/home/pi/testdata/test.json");
+  let parsed = JSON.parse(raw);
 
-  greengrassHelloWorldRun();
+  greengrassHelloWorldRun(parsed);
 
   callback(null, response);
 };
