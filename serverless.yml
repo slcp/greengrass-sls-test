@@ -28,6 +28,9 @@ functions:
   testPythonFunc:
     runtime: python2.7
     handler: scanner_reader/handler.hello
+    package:
+      exclude:
+        - scanner_reader/venv/include/python2.7
 
 resources:
   Resources:
