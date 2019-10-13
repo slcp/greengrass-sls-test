@@ -11,7 +11,8 @@ function publishCallback(err, data) {
   console.log(data);
 }
 
-let raw = fs.readdirSync("/volumes/TestData");
+console.log(fs.readdirSync("/"))
+let raw = fs.readdirSync("/");
 let parsed = JSON.parse(raw);
 
 const myPlatform = util.format("%s-%s", os.platform(), os.release());
