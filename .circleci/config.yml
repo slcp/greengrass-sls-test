@@ -30,10 +30,9 @@ jobs:
           at: ~/repo
       - run:
           name: Install dependencies
-          command: virtualenv -p python2.7 scanner_reader/venv
-      - run:
-          name: Install dependencies
-          command: source scanner_reader/venv/bin/activate
+          command: |
+            - virtualenv -p python2.7 scanner_reader/venv
+            - echo "source scanner_reader/venv/bin/activate" >> $BASH_ENV
       - run:
           name: Install dependencies
           command: pip install -r scanner_reader/requirements.txt
