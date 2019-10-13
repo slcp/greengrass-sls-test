@@ -146,6 +146,7 @@ resources:
           - Id: GGLambdaLoggerFile
             Type: FileSystem
             Component: Lambda
+            Space: 50000
             Level: INFO
     TestResourceDefinition:
       Type: 'AWS::Greengrass::ResourceDefinition'
