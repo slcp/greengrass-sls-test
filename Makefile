@@ -9,7 +9,7 @@ help: ## Output available commands
 build: ## Build
 	bash ./make-build.sh
 
-depndencies:
+dependencies:
 	@npm install
 	@source scanner_reader/venv/bin/activate
 	@pip install -r scanner_reader/scanner_reader/requirements.txt
