@@ -21,3 +21,6 @@ var/
 node_modules/
 **/venv
 package-lock.json
+wpa_supplicant.conf
+ssh
+
