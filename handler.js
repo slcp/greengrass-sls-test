@@ -13,13 +13,16 @@ function publishCallback(err, data) {
 
 const myPlatform = util.format("%s-%s", os.platform(), os.release());
 
-function greengrassHelloWorldRun(messge) {
-  iotClient.publish({
-  topic: "hello/world",
-  payload: JSON.stringify({
-    message: message
-  })
-}, publishCallback);
+function greengrassHelloWorldRun(message) {
+  iotClient.publish(
+    {
+      topic: "hello/world",
+      payload: JSON.stringify({
+        message: message
+      })
+    },
+    publishCallback
+  );
 }
 
 module.exports.testGreengrassFunctionOne = (event, context, callback) => {
