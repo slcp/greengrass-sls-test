@@ -21,6 +21,26 @@ jobs:
           root: ~/repo
           paths:
             - "*"
+  get-python:
+    docker:
+      - image: circleci/python:2.7-stretch
+    working_directory: ~/repo/
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Install dependencies
+          command: virtualenv -p python2.7 scanner_reader/venv
+      - run:
+          name: Install dependencies
+          command: source scanner_reader/venv/bin/activate
+      - run:
+          name: Install dependencies
+          command: pip install -r scanner_reader/requirements.txt
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - "*"
   deploy-serverless:
     docker:
       - image: amaysim/serverless:1.53.0
@@ -55,10 +75,13 @@ workflows:
   build:
     jobs:
       - get
+      - get-python:
+          requires:
+            - get
       - deploy-serverless:
           stage: dev
           requires:
-            - get
+            - get-python
           filters:
             branches:
               only:

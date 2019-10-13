@@ -11,8 +11,6 @@ build: ## Build
 
 dependencies:
 	@npm install
-	source scanner_reader/venv/bin/activate
-	@pip install -r scanner_reader/requirements.txt
 
 deploy-dev:
 	serverless deploy --stage dev
