@@ -11,7 +11,7 @@ function publishCallback(err, data) {
   console.log(data);
 }
 
-console.log(fs.readdirSync("/"))
+console.log(fs.readdirSync("/home"))
 // let raw = fs.readdirSync("/");
 // let parsed = JSON.parse(raw);
 

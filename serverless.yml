@@ -175,7 +175,7 @@ resources:
             ResourceDataContainer:
               LocalVolumeResourceData:
                 SourcePath: /home/pi/testdata
-                DestinationPath: /test
+                DestinationPath: /home/test
                 GroupOwnerSetting:
                   AutoAddGroupOwner: true
     TestSubscriptionDefinition:
