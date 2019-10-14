@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   get:
     docker:
-      - image: amaysim/serverless:1.53.0
+      - image: honeysnow/tester
     working_directory: ~/repo/
     steps:
       - checkout:
@@ -23,7 +23,7 @@ jobs:
             - "*"
   get-python:
     docker:
-      - image: circleci/python:2.7-stretch
+      - image: honeysnow/tester
     working_directory: ~/repo/
     steps:
       - attach_workspace:
@@ -40,7 +40,7 @@ jobs:
             - "*"
   deploy-serverless:
     docker:
-      - image: amaysim/serverless:1.53.0
+      - image: honeysnow/tester
     working_directory: ~/repo/
     parameters:
       stage:
@@ -54,7 +54,7 @@ jobs:
           command: make deploy-<< parameters.stage >>
   deploy-group:
     docker:
-      - image: amaysim/serverless:1.53.0
+      - image: honeysnow/tester
     working_directory: ~/repo/
     parameters:
       stage:
