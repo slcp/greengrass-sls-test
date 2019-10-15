@@ -2,7 +2,7 @@ service: greengrasserverless
 plugins:
   - serverless-pseudo-parameters
   - serverless-aws-alias
-
+  - serverless-python-requirements
 custom:
   # COGNITO_USER_POOL_ARN: ${file(./serverless.env.yml):${opt:stage, self:provider.stage}.COGNITO_USER_POOL_ARN}
   dev:
@@ -14,12 +14,14 @@ custom:
 
 provider:
   name: aws
-  runtime: nodejs8.10
   stage: dev
   region: eu-west-2
   variableSyntax: "\\${((?!iot)[ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)]+?)}" # Serverless will only match on vars not prefixed with iot
   # environment:
     # PHARMACY_CONNECTION_STRING: ${file(./serverless.env.yml):${opt:stage, self:provider.stage}.PHARMACY_CONNECTION_STRING}
+
+package:
+  individually: true
 
 functions:
   testGreengrassFunc:
@@ -27,10 +29,8 @@ functions:
     handler: handler.testGreengrassFunctionOne # required, handler set in AWS Lambda
   testPythonFunc:
     runtime: python2.7
-    handler: scanner_reader/handler.hello
-    package:
-      exclude:
-        - /root/repo/scanner_reader/venv/include/python2.7
+    handler: handler.hello
+    module: scanner_reader
 
 resources:
   Resources:
