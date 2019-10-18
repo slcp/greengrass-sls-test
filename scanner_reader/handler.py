@@ -15,12 +15,22 @@ def hello(event, context):
         "body": json.dumps(body)
     }
 
-    client.publish(
-        topic='hello/world',
-        payload=json.dumps({
-            'fromPython': 'python'
-        })
-    )
+    if 'go_local' in event:
+        client.publish(
+            topic='hello/worldnodefunc',
+            payload=json.dumps({
+                **event,
+                'touched_by': 'python'
+            })
+        )
+    else:
+        client.publish(
+            topic='hello/world',
+            payload=json.dumps({
+                **event,
+                'touched_by': 'python'
+            })
+        )
 
     return response
 

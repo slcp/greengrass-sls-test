@@ -11,18 +11,29 @@ function publishCallback(err, data) {
   console.log(data);
 }
 
-const myPlatform = util.format("%s-%s", os.platform(), os.release());
-
-function greengrassHelloWorldRun(message) {
+function greengrassHelloWorldRun(event) {
+  if (event.go_local) {
+    iotClient.publish(
+      {
+        topic: "hello/worldpythonfunc",
+        payload: JSON.stringify({
+          ...event,
+          touchedBy: "javascript"
+        })
+      },
+      publishCallback
+    );
+} else {
   iotClient.publish(
-    {
-      topic: "hello/world",
-      payload: JSON.stringify({
-        message: message
-      })
-    },
-    publishCallback
-  );
+      {
+        topic: "hello/world",
+        payload: JSON.stringify({
+          ...event,
+          touchedBy: "javascript"
+        })
+      },
+      publishCallback
+    );
 }
 
 module.exports.testGreengrassFunctionOne = (event, context, callback) => {
@@ -37,7 +48,7 @@ module.exports.testGreengrassFunctionOne = (event, context, callback) => {
   let raw = fs.readFileSync("/home/pi/testdata/test.json");
   let parsed = JSON.parse(raw);
 
-  greengrassHelloWorldRun(parsed);
+  greengrassHelloWorldRun(event);
 
   callback(null, response);
 };
