@@ -219,7 +219,19 @@ resources:
             Source: '#{TestPythonFuncLambdaFunction.Arn}:${self:provider.stage}'
             Subject: hello/world
             # Target requires version, not just arn
-            Target: cloud             
+            Target: cloud
+          - Id: TestSubscription5
+            # Source: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:thing/DeviceInGreengrassGroup1
+            Source: '#{TestPythonFuncLambdaFunction.Arn}:${self:provider.stage}'
+            Subject: hello/worldnodefunc
+            # Target requires version, not just arn
+            Target: '#{TestGreengrassFuncLambdaFunction.Arn}:${self:provider.stage}'
+          - Id: TestSubscription6
+            # Source: arn:aws:iot:${self:provider.region}:#{AWS::AccountId}:thing/DeviceInGreengrassGroup1
+            Source: '#{TestGreengrassFuncLambdaFunction.Arn}:${self:provider.stage}'
+            Subject: hello/worldpythonfunc
+            # Target requires version, not just arn
+            Target: '#{TestPythonFuncLambdaFunction.Arn}:${self:provider.stage}'      
     TestGroup:
       Type: 'AWS::Greengrass::Group'
       Properties:
