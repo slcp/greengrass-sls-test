@@ -72,13 +72,10 @@ workflows:
   build:
     jobs:
       - get
-      - get-python:
-          requires:
-            - get
       - deploy-serverless:
           stage: dev
           requires:
-            - get-python
+            - get
           filters:
             branches:
               only:
