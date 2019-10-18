@@ -13,6 +13,7 @@ function publishCallback(err, data) {
 
 function greengrassHelloWorldRun(event) {
   if (event.go_local) {
+    delete event.go_local;
     iotClient.publish(
       {
         topic: "hello/worldpythonfunc",
@@ -23,18 +24,18 @@ function greengrassHelloWorldRun(event) {
       },
       publishCallback
     );
+  } else {
+    iotClient.publish(
+      {
+        topic: "hello/world",
+        payload: JSON.stringify({
+          ...event,
+          touchedBy: "javascript"
+        })
+      },
+      publishCallback
+    );
   }
-
-  iotClient.publish(
-    {
-      topic: "hello/world",
-      payload: JSON.stringify({
-        ...event,
-        touchedBy: "javascript"
-      })
-    },
-    publishCallback
-  );
 }
 
 module.exports.testGreengrassFunctionOne = (event, context, callback) => {

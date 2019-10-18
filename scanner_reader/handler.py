@@ -18,15 +18,16 @@ def hello(event, context):
     event['touched_by'] = 'python'
 
     if 'go_local' in event:
+        del event['go_local']
         client.publish(
             topic='hello/worldnodefunc',
             payload=json.dumps(event)
         )
-
-    client.publish(
-        topic='hello/world',
-        payload=json.dumps(event)
-    )
+    else:
+        client.publish(
+            topic='hello/world',
+            payload=json.dumps(event)
+        )
 
     return response
 
