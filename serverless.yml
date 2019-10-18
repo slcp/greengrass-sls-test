@@ -34,10 +34,6 @@ functions:
 
 resources:
   Resources:
-    # LambdaVersion: 
-    #   Type: AWS::Lambda::Version
-    #   Properties: 
-    #     FunctionName: 
     GreengrasscoreDevice:
       Type: 'AWS::IoT::Thing'
       Properties:

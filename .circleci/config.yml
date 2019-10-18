@@ -7,33 +7,33 @@ jobs:
     steps:
       - checkout:
           path: ~/repo
-      # - restore_cache: # Restore modules from previous builds.
-      #     keys:
-      #       - node-modules-{{ checksum "package.json" }}
+      - restore_cache: # Restore modules from previous builds.
+          keys:
+            - dependencies-{{ checksum "package.json" }}-{{ checksum "scanner_reader/requirements.txt }}
+            - dependencies-{{ checksum "package.json" }}
+            - dependencies-{{ checksum "scanner_reader/requirements.txt }}
       - run:
-          name: Install dependencies
+          name: Install node dependencies
           command: make dependencies
       - save_cache: # Cache modules between builds.
           paths:
             - ./node_modules
-          key: node-modules-{{ checksum "package.json" }}
-      - persist_to_workspace:
-          root: ~/repo
-          paths:
-            - "*"
-  get-python:
-    docker:
-      - image: honeysnow/tester
-    working_directory: ~/repo/
-    steps:
-      - attach_workspace:
-          at: ~/repo
+          key: dependencies-{{ checksum "package.json" }}
       - run:
-          name: Install dependencies
+          name: Source venv
           command: virtualenv -p python2.7 scanner_reader/venv && echo "source scanner_reader/venv/bin/activate" >> $BASH_ENV
       - run:
-          name: Install dependencies
+          name: Install python dependencies
           command: pip install -r scanner_reader/requirements.txt
+      - save_cache: # Cache modules between builds.
+          paths:
+            - ./scanner_reader/venv
+          key: dependencies-{{ checksum "scanner_reader/requirements.txt }}
+      - save_cache: # Cache modules between builds.
+          paths:
+            - ./scanner_reader/venv
+            - ./node_modules
+          key: dependencies-{{ checksum "package.json" }}-{{ checksum "scanner_reader/requirements.txt }}
       - persist_to_workspace:
           root: ~/repo
           paths:
