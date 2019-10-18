@@ -23,14 +23,14 @@ def hello(event, context):
                 'touched_by': 'python'
             })
         )
-    else:
-        client.publish(
-            topic='hello/world',
-            payload=json.dumps({
-                **event,
-                'touched_by': 'python'
-            })
-        )
+
+    client.publish(
+        topic='hello/world',
+        payload=json.dumps({
+            **event,
+            'touched_by': 'python'
+        })
+    )
 
     return response
 

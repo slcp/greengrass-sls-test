@@ -23,17 +23,18 @@ function greengrassHelloWorldRun(event) {
       },
       publishCallback
     );
-} else {
+  }
+
   iotClient.publish(
-      {
-        topic: "hello/world",
-        payload: JSON.stringify({
-          ...event,
-          touchedBy: "javascript"
-        })
-      },
-      publishCallback
-    );
+    {
+      topic: "hello/world",
+      payload: JSON.stringify({
+        ...event,
+        touchedBy: "javascript"
+      })
+    },
+    publishCallback
+  );
 }
 
 module.exports.testGreengrassFunctionOne = (event, context, callback) => {
