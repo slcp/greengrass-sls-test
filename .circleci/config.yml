@@ -88,5 +88,3 @@ workflows:
             branches:
               only:
                 - master
-      # get latest group version using group name
-      # deploy version - aws cli
