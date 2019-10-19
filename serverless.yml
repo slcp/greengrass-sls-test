@@ -139,22 +139,25 @@ resources:
               Environment:
                 Execution:
                   IsolationMode: GreengrassContainer
-          - Id: SpoolerFunctionSystemType
-            # This function is provided by amazon but must be deployd if desired - what i know now
-            # is that it will cache traffic on disk instead of in memory so it will persist across reboots
-            FunctionArn: 'arn:aws:lambda:::function:GGCloudSpooler:1'
-            FunctionConfiguration:
-              Timeout: 3
-              MemorySize: 32768
-              EncodingType: json
-              Executable: spooler
-              Pinned: true
-              Environment:
-                Variables: 
-                  GG_CONFIG_MAX_SIZE_BYTES: 2621440
-                  GG_CONFIG_STORAGE_TYPE: FileSystem
-                Execution:
-                  IsolationMode: GreengrassContainer
+          # Amazon provided functions that govern some configurations of the core
+          #   # This function is provided by amazon but must be deployd if desired - what i know now
+          #   # is that it will cache traffic on disk instead of in memory so it will persist across reboots.
+          #   # Looks like this MUST be configure via the API :(
+          # - Id: SpoolerFunctionSystemType
+          #   FunctionArn: 'arn:aws:lambda:::function:GGCloudSpooler:1'
+          #   FunctionConfiguration:
+          #     Timeout: 3
+          #     MemorySize: 32768
+          #     EncodingType: json
+          #     Executable: spooler
+          #     Pinned: true
+          #     Environment:
+          #       Variables: 
+          #         GG_CONFIG_MAX_SIZE_BYTES: 2621440
+          #         GG_CONFIG_STORAGE_TYPE: FileSystem
+          #       Execution:
+          #         IsolationMode: GreengrassContainer
+          # Add function:GGIPDetector for automatic IP detection - allow auto deploy from first definition
     TestLoggerDefinition:
       Type: 'AWS::Greengrass::LoggerDefinition'
       Properties:

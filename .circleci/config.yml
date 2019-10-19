@@ -65,7 +65,7 @@ jobs:
           at: ~/repo
       - deploy:
           name: Start << parameters.stage >> deployment
-          command: node deploy-group.js
+          command: make deploy-group
 
 workflows:
   version: 2.1

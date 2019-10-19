@@ -7,16 +7,19 @@ help: ## Output available commands
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 build: ## Build
-	bash ./make-build.sh
+	@bash ./make-build.sh
 
 dependencies:
 	@npm install
 
 deploy-dev:
-	serverless deploy --stage dev
+	@serverless deploy --stage dev
 
 deploy-uat:
-	serverless deploy --stage uat
+	@serverless deploy --stage uat
 
 deploy-prod:
-	serverless deploy --stage prod
+	@serverless deploy --stage prod
+
+deploy-group:
+	@node deploy-utilities/deploy-group.js
