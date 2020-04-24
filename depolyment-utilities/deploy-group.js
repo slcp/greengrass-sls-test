@@ -1,10 +1,6 @@
 const GroupDeployer =  require("./groupDeployer");
 const AWS = require("aws-sdk")
 
-// const credentials = new AWS.SharedIniFileCredentials({
-//   profile: "personal"
-// });
-// AWS.config.credentials = credentials;
 ggClient = new AWS.Greengrass({ region: "eu-west-2" });
 
 const deployer = new GroupDeployer.GroupDeployer(ggClient);

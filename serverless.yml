@@ -3,22 +3,12 @@ plugins:
   - serverless-pseudo-parameters
   - serverless-aws-alias
   - serverless-python-requirements
-custom:
-  # COGNITO_USER_POOL_ARN: ${file(./serverless.env.yml):${opt:stage, self:provider.stage}.COGNITO_USER_POOL_ARN}
-  dev:
-    DEEP_LINK_SCHEME: "well-pharmacy-dev"
-  uat:
-    DEEP_LINK_SCHEME: "well-pharmacy-uat"
-  prod:
-    DEEP_LINK_SCHEME: "well-pharmacy"
 
 provider:
   name: aws
   stage: dev
   region: eu-west-2
   variableSyntax: "\\${((?!iot)[ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)]+?)}" # Serverless will only match on vars not prefixed with iot
-  # environment:
-    # PHARMACY_CONNECTION_STRING: ${file(./serverless.env.yml):${opt:stage, self:provider.stage}.PHARMACY_CONNECTION_STRING}
 
 package:
   individually: true
